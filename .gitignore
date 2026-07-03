@@ -9,9 +9,11 @@ build/
 *.egg-info/
 
 .env
-.env.local
+.env.*
+!.env.example
 settings.yaml
-settings.local.yaml
+settings.*.yaml
+!settings.yaml.example
 
 .vscode/
 .idea/
