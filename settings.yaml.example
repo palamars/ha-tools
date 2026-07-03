@@ -1,0 +1,30 @@
+# Copy to settings.yaml and edit locally. Do not commit settings.yaml.
+
+server:
+  name: influxdb-mcp-server
+  host: 0.0.0.0
+  port: 8000
+
+influxdb:
+  url: http://localhost:8086
+  org: home
+  bucket: homeassistant
+  timeout_seconds: 20
+  verify_ssl: true
+
+  # Prefer INFLUXDB_TOKEN or INFLUXDB_TOKEN_FILE for the access token.
+  # You may put token here only in your local untracked settings.yaml.
+  # token: put-your-read-only-token-here
+
+security:
+  allow_raw_flux: false
+  max_records: 1000
+  max_query_chars: 10000
+
+  # Empty list means "allow default bucket only".
+  # Add bucket names here if the assistant may read several buckets.
+  allowed_buckets:
+    - homeassistant
+
+defaults:
+  range_start: -24h
