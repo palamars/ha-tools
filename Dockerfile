@@ -1,21 +1,14 @@
-FROM python:3.12-slim
+ARG BUILD_ARCH=amd64
+FROM ghcr.io/home-assistant/${BUILD_ARCH}-base:latest
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+RUN apk add --no-cache python3 py3-pip
 
-WORKDIR /app
+COPY requirements.txt /tmp/requirements.txt
+RUN python3 -m pip install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
-RUN adduser --disabled-password --gecos "" appuser
+COPY run.sh /run.sh
+COPY app.py /app.py
 
-COPY pyproject.toml README.md ./
-COPY src ./src
+RUN chmod a+x /run.sh
 
-RUN pip install --upgrade pip \
-    && pip install .
-
-USER appuser
-
-EXPOSE 8000
-
-CMD ["influxdb-mcp-server", "--transport", "sse", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/run.sh"]
