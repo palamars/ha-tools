@@ -20,6 +20,17 @@ No real local values are stored in this repository.
 
 Configure sensitive values only in Home Assistant add-on options. OAuth access tokens are created at runtime in `/data/oauth_tokens.json` inside the add-on data directory.
 
+## Structure
+
+The Python code is split into modules:
+
+- `app/config.py` — add-on options and derived runtime settings.
+- `app/auth.py` — MCP endpoint authorization middleware.
+- `app/oauth.py` — OAuth discovery, authorization and token routes.
+- `app/influx.py` — InfluxDB v1 / InfluxQL access and read-only validation.
+- `app/domain_tools.py` — MCP tools for Home Assistant metrics, energy, power and future domain functions.
+- `app/mcp_server.py` — FastMCP app composition and HTTP routes.
+
 ## Tools
 
 - `health` — add-on and InfluxDB connectivity check.
@@ -70,6 +81,6 @@ Without an OAuth token, `/sse` should return `401`, not `500`.
 - `repository.yaml` — Home Assistant add-on repository metadata.
 - `influxdb_mcp/config.yaml` — Home Assistant add-on manifest and option schema.
 - `influxdb_mcp/Dockerfile` — add-on image build.
-- `influxdb_mcp/app.py` — MCP server, OAuth and InfluxQL logic.
+- `influxdb_mcp/app/` — Python package with MCP, OAuth and InfluxDB modules.
 - `influxdb_mcp/run.sh` — container entrypoint.
 - `influxdb_mcp/requirements.txt` — Python dependencies.
