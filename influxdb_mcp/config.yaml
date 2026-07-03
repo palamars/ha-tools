@@ -1,6 +1,6 @@
 name: "InfluxDB MCP"
 description: "Read-only MCP server for InfluxDB v1 / InfluxQL with OAuth or header auth"
-version: "0.4.5"
+version: "0.5.0"
 slug: "influxdb_mcp"
 init: false
 startup: application
