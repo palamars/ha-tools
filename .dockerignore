@@ -5,5 +5,4 @@ __pycache__
 .ruff_cache
 .env
 .env.local
-settings.yaml
-settings.local.yaml
+README_INSTALL.txt
