@@ -1,20 +1,20 @@
-.venv/
+# Runtime and local data
+/data/
+oauth_tokens.json
+options.json
+*.log
+
+# Python
 __pycache__/
 *.py[cod]
+.venv/
 .pytest_cache/
 .ruff_cache/
-.mypy_cache/
-dist/
-build/
-*.egg-info/
 
+# Local/editor files
 .env
 .env.*
 !.env.example
-settings.yaml
-settings.*.yaml
-!settings.yaml.example
-
 .vscode/
 .idea/
 .DS_Store
