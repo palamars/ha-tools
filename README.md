@@ -1,143 +1,73 @@
-# InfluxDB MCP Server
+# InfluxDB MCP Home Assistant add-on
 
-Минимальный read-only MCP server для InfluxDB 2.x / InfluxDB Cloud.
+Read-only MCP server for Home Assistant + InfluxDB v1 / InfluxQL.
 
-Проект сделан так, чтобы **не хранить секреты в коде и репозитории**:
+This is a Home Assistant local add-on. It exposes an MCP SSE endpoint and lets an AI assistant query InfluxDB through safe read-only tools.
 
-- реальные `.env` и `settings.yaml` добавлены в `.gitignore`;
-- в Git лежат только `.env.example` и `settings.yaml.example`;
-- токен InfluxDB читается из `INFLUXDB_TOKEN`, `INFLUXDB_TOKEN_FILE` или из локального `settings.yaml`;
-- по умолчанию разрешены только read-only инструменты;
-- raw Flux-запросы выключены настройкой `allow_raw_flux: false`.
+## Secrets
 
-## Что умеет
+No real local values are stored in this repository.
 
-MCP tools:
+Configure sensitive values only in Home Assistant add-on options. OAuth access tokens are created at runtime in `/data/oauth_tokens.json` inside the add-on data directory.
 
-- `health` — проверка подключения к InfluxDB;
-- `list_buckets` — список доступных buckets;
-- `list_measurements` — список measurements;
-- `list_field_keys` — поля measurement;
-- `list_tag_keys` — tags measurement;
-- `list_tag_values` — значения конкретного tag;
-- `query_measurement` — безопасный шаблонный запрос по measurement, fields, tags и диапазону времени;
-- `run_flux_query` — произвольный Flux, только если явно включить `allow_raw_flux`.
+## Tools
 
-## Быстрый старт через Docker
+- `health` — add-on and InfluxDB connectivity check.
+- `show_databases` — list InfluxDB databases.
+- `show_measurements` — list measurements.
+- `show_field_keys` — list fields for a measurement.
+- `show_tag_values` — list tag values.
+- `find_series_by_entity` — find series by Home Assistant `entity_id`.
+- `query_influx` — run read-only `SELECT` or `SHOW` InfluxQL.
+- `energy_day_night` — calculate kWh split by day/night tariff.
+- `energy_hourly_distribution` — calculate energy distribution by local hour.
 
-```bash
-cp .env.example .env
-cp settings.yaml.example settings.yaml
-```
+`query_influx` blocks write/admin statements and multiple statements.
 
-Отредактируй локальные файлы:
+## Install as a local Home Assistant add-on
+
+Copy this folder to Home Assistant:
 
 ```bash
-nano .env
-nano settings.yaml
+/addons/influx_mcp/
 ```
 
-Запуск:
+Then run:
 
 ```bash
-docker compose up -d --build
+ha addons reload
+ha addons update local_influx_mcp
+ha addons restart local_influx_mcp
 ```
 
-Проверка логов:
+If Home Assistant does not detect the update:
 
 ```bash
-docker compose logs -f influxdb-mcp
+ha supervisor restart
+ha addons reload
+ha addons update local_influx_mcp
+ha addons restart local_influx_mcp
 ```
 
-## Локальный запуск без Docker
+## Required configuration
+
+Open the add-on configuration and replace the example values with your real values.
+
+For ChatGPT / external MCP access, `public_base_url` must be the external HTTPS URL that points to this add-on through your reverse proxy.
+
+## Test
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-pip install -e ".[dev]"
-
-cp .env.example .env
-cp settings.yaml.example settings.yaml
-
-influxdb-mcp-server --transport stdio
+curl -i https://mcp.example.com/health
+curl -i -N https://mcp.example.com/sse
 ```
 
-Для HTTP/SSE транспорта:
+Without an OAuth token, `/sse` should return `401`, not `500`.
 
-```bash
-influxdb-mcp-server --transport sse --host 0.0.0.0 --port 8000
-```
+## Files
 
-## Настройки
-
-Путь к YAML-файлу можно задать переменной:
-
-```bash
-export INFLUXDB_MCP_SETTINGS=/path/to/settings.yaml
-```
-
-Переменные окружения имеют приоритет над `settings.yaml`.
-
-Основные переменные:
-
-```env
-INFLUXDB_URL=http://localhost:8086
-INFLUXDB_ORG=home
-INFLUXDB_BUCKET=homeassistant
-INFLUXDB_TOKEN=put-token-here
-```
-
-Для Docker secrets можно использовать файл:
-
-```env
-INFLUXDB_TOKEN_FILE=/run/secrets/influxdb_token
-```
-
-## Пример settings.yaml
-
-```yaml
-server:
-  name: influxdb-mcp-server
-  host: 0.0.0.0
-  port: 8000
-
-influxdb:
-  url: http://localhost:8086
-  org: home
-  bucket: homeassistant
-  timeout_seconds: 20
-  verify_ssl: true
-
-security:
-  allow_raw_flux: false
-  max_records: 1000
-  max_query_chars: 10000
-  allowed_buckets:
-    - homeassistant
-
-defaults:
-  range_start: -24h
-```
-
-## Пример запроса через MCP
-
-Попроси ассистента:
-
-> Покажи среднюю мощность `sensor.zigbee_power` за последние 24 часа.
-
-Обычно для Home Assistant в InfluxDB удобнее сначала вызвать:
-
-1. `list_measurements`
-2. `list_field_keys`
-3. `list_tag_keys`
-4. `query_measurement`
-
-## Безопасность
-
-Этот сервер не записывает данные в InfluxDB и не удаляет их. Однако чтение из InfluxDB тоже может раскрывать чувствительные данные, поэтому:
-
-- не публикуй сервер в интернет без HTTPS и внешней авторизации;
-- токен InfluxDB выдавай с минимальными правами, желательно read-only;
-- оставляй `allow_raw_flux: false`, если сервером будут пользоваться не только администраторы;
-- ограничивай buckets через `allowed_buckets`;
-- не коммить `.env` и `settings.yaml`.
+- `config.yaml` — Home Assistant add-on manifest and option schema.
+- `Dockerfile` — add-on image build.
+- `app.py` — MCP server, OAuth and InfluxQL logic.
+- `run.sh` — container entrypoint.
+- `requirements.txt` — Python dependencies.
