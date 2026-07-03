@@ -2,7 +2,7 @@
 
 Read-only MCP server for Home Assistant + InfluxDB v1 / InfluxQL.
 
-This repository is formatted as a Home Assistant add-on repository. The add-on code is in `influx_mcp/`, but the Home Assistant add-on slug is `influxdb_mcp`, so it does not conflict with an older local add-on installed as `local_influx_mcp`.
+This repository is formatted as a Home Assistant add-on repository. The add-on code is in `influxdb_mcp/` and uses the slug `influxdb_mcp`, so it does not conflict with an older local add-on installed as `local_influx_mcp`.
 
 ## Add this repository to Home Assistant
 
@@ -19,6 +19,17 @@ Then install **InfluxDB MCP** from the add-on store.
 No real local values are stored in this repository.
 
 Configure sensitive values only in Home Assistant add-on options. OAuth access tokens are created at runtime in `/data/oauth_tokens.json` inside the add-on data directory.
+
+## Structure
+
+The Python code is split into modules:
+
+- `app/config.py` — add-on options and derived runtime settings.
+- `app/auth.py` — MCP endpoint authorization middleware.
+- `app/oauth.py` — OAuth discovery, authorization and token routes.
+- `app/influx.py` — InfluxDB v1 / InfluxQL access and read-only validation.
+- `app/domain_tools.py` — MCP tools for Home Assistant metrics, energy, power and future domain functions.
+- `app/mcp_server.py` — FastMCP app composition and HTTP routes.
 
 ## Tools
 
