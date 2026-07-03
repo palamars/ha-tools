@@ -83,3 +83,21 @@ def register_domain_tools(mcp) -> None:
         else:
             query = f"SHOW TAG VALUES WITH KEY = {quote_identifier(tag)}"
         return table_from_result(influx_query_raw(query, database=database or DATABASE))
+
+    @mcp.tool()
+    def find_series_by_entity(entity_id: str, database: Optional[str] = None) -> list[dict[str, Any]]:
+        """Find InfluxDB series that have the specified Home Assistant entity_id tag."""
+        query = f"SHOW SERIES WHERE \"entity_id\" = {quote_string(entity_id)}"
+        return table_from_result(influx_query_raw(query, database=database or DATABASE), max_rows=MAX_ROWS)
+
+    @mcp.tool()
+    def query_influx(
+        query: str,
+        database: Optional[str] = None,
+        max_rows: Optional[int] = None,
+    ) -> dict[str, Any]:
+        """Run a read-only InfluxQL SELECT/SHOW query and return rows."""
+        q = validate_readonly_influxql(query)
+        limit = min(int(max_rows or MAX_ROWS), MAX_ROWS)
+        rows = table_from_result(influx_query_raw(q, database=database or DATABASE), max_rows=limit)
+        return {"query": q, "rows": rows, "row_count": len(rows), "truncated": len(rows) >= limit}
