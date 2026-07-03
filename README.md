@@ -2,6 +2,8 @@
 
 Read-only MCP server for Home Assistant + InfluxDB v1 / InfluxQL.
 
+Current version: **0.5.0**.
+
 This repository is formatted as a Home Assistant add-on repository. The add-on code is in `influxdb_mcp/` and uses the slug `influxdb_mcp`, so it does not conflict with an older local add-on installed as `local_influx_mcp`.
 
 ## Add this repository to Home Assistant
