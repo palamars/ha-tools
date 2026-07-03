@@ -1,73 +1,33 @@
 # InfluxDB MCP Home Assistant add-on
 
-Read-only MCP server for Home Assistant + InfluxDB v1 / InfluxQL.
+Current branch version: **0.5.1**.
 
-This is a Home Assistant local add-on. It exposes an MCP SSE endpoint and lets an AI assistant query InfluxDB through safe read-only tools.
+This branch is not `main`. It contains the next add-on version in:
 
-## Secrets
-
-No real local values are stored in this repository.
-
-Configure sensitive values only in Home Assistant add-on options. OAuth access tokens are created at runtime in `/data/oauth_tokens.json` inside the add-on data directory.
-
-## Tools
-
-- `health` — add-on and InfluxDB connectivity check.
-- `show_databases` — list InfluxDB databases.
-- `show_measurements` — list measurements.
-- `show_field_keys` — list fields for a measurement.
-- `show_tag_values` — list tag values.
-- `find_series_by_entity` — find series by Home Assistant `entity_id`.
-- `query_influx` — run read-only `SELECT` or `SHOW` InfluxQL.
-- `energy_day_night` — calculate kWh split by day/night tariff.
-- `energy_hourly_distribution` — calculate energy distribution by local hour.
-
-`query_influx` blocks write/admin statements and multiple statements.
-
-## Install as a local Home Assistant add-on
-
-Copy this folder to Home Assistant:
-
-```bash
-/addons/influx_mcp/
+```text
+influxdb_mcp/
 ```
 
-Then run:
+The add-on slug is:
 
-```bash
-ha addons reload
-ha addons update local_influx_mcp
-ha addons restart local_influx_mcp
+```text
+influxdb_mcp
 ```
 
-If Home Assistant does not detect the update:
+## Changelog
 
-```bash
-ha supervisor restart
-ha addons reload
-ha addons update local_influx_mcp
-ha addons restart local_influx_mcp
+The Home Assistant add-on changelog file is here:
+
+```text
+influxdb_mcp/CHANGELOG.md
 ```
 
-## Required configuration
+## Add-on repository URL
 
-Open the add-on configuration and replace the example values with your real values.
-
-For ChatGPT / external MCP access, `public_base_url` must be the external HTTPS URL that points to this add-on through your reverse proxy.
-
-## Test
-
-```bash
-curl -i https://mcp.example.com/health
-curl -i -N https://mcp.example.com/sse
+```text
+https://github.com/palamars/ha-tools
 ```
 
-Without an OAuth token, `/sse` should return `401`, not `500`.
+## Notes
 
-## Files
-
-- `config.yaml` — Home Assistant add-on manifest and option schema.
-- `Dockerfile` — add-on image build.
-- `app.py` — MCP server, OAuth and InfluxQL logic.
-- `run.sh` — container entrypoint.
-- `requirements.txt` — Python dependencies.
+The `main` branch is still on 0.5.0. This branch is for preparing 0.5.1 before merging.
