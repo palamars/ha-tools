@@ -1,0 +1,81 @@
+name: "InfluxDB MCP"
+description: "Read-only MCP server for InfluxDB v1 / InfluxQL with OAuth or header auth"
+version: "0.4.5"
+slug: "influx_mcp"
+init: false
+startup: application
+boot: auto
+arch:
+  - amd64
+  - aarch64
+
+build_from:
+  amd64: ghcr.io/home-assistant/amd64-base:latest
+  aarch64: ghcr.io/home-assistant/aarch64-base:latest
+
+ports:
+  8000/tcp: 8000
+
+ports_description:
+  8000/tcp: "MCP SSE endpoint"
+
+options:
+  influx_url: "http://a0d7b954-influxdb.local.hass.io:8086"
+  database: "homeassistant"
+  username: ""
+  password: ""
+  max_rows: 1000
+  max_days: 90
+
+  # none | header | oauth
+  auth_mode: "oauth"
+
+  # Used only when auth_mode=header
+  auth_header: "Authorization"
+  auth_scheme: "Bearer"
+  auth_token: ""
+
+  # Used when auth_mode=oauth
+  public_base_url: "https://mcp.example.com"
+  oauth_login_password: ""
+  oauth_token_ttl_hours: 720
+
+  # OAuth access tokens are persisted in /data/oauth_tokens.json.
+  # Set true if you want restart/rebuild not to require reauthorization.
+  persist_oauth_tokens: true
+
+  # FastMCP DNS rebinding protection.
+  # Keep the external domain here when proxying through Nginx Proxy Manager.
+  allowed_hosts:
+    - "mcp.example.com"
+    - "mcp.example.com:*"
+    - "127.0.0.1:*"
+    - "localhost:*"
+
+  allowed_origins:
+    - "https://mcp.example.com"
+    - "http://127.0.0.1:*"
+    - "http://localhost:*"
+
+schema:
+  influx_url: str
+  database: str
+  username: str
+  password: password
+  max_rows: int
+  max_days: int
+
+  auth_mode: str
+  auth_header: str
+  auth_scheme: str
+  auth_token: password
+
+  public_base_url: str
+  oauth_login_password: password
+  oauth_token_ttl_hours: int
+  persist_oauth_tokens: bool
+
+  allowed_hosts:
+    - str
+  allowed_origins:
+    - str
