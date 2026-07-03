@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-APP_VERSION = "0.4.5"
+APP_VERSION = "0.5.0"
 OPTIONS_PATH = Path("/data/options.json")
 TOKEN_STORE_PATH = Path("/data/oauth_tokens.json")
 
