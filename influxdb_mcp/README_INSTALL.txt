@@ -1,6 +1,11 @@
 InfluxDB MCP Home Assistant add-on v0.4.5
 
-What changed in v0.4.5:
+Repository add-on slug: influxdb_mcp
+Repository add-on folder: influxdb_mcp/
+
+This intentionally differs from the older local add-on folder /addons/influx_mcp/ so the GitHub version can be installed as a separate add-on without overwriting the local one.
+
+What changed:
 - Removed local secrets and replaced site-specific defaults with examples.
 - Fixed OAuth middleware 401 response bug.
   Previous build could throw KeyError: 'type' on unauthorized POST /sse,
@@ -9,24 +14,30 @@ What changed in v0.4.5:
 - OAuth access tokens are persisted in /data/oauth_tokens.json.
 - energy_day_night assigns hourly deltas to the current interval hour.
 
-Install/update:
-1. Copy all files into:
-   /addons/influx_mcp/
+Install from Home Assistant repository:
+1. Settings -> Add-ons -> Add-on Store -> menu -> Repositories.
+2. Add:
+   https://github.com/palamars/ha-tools
+3. Install InfluxDB MCP.
+
+Optional local install/update:
+1. Copy the add-on folder into:
+   /addons/influxdb_mcp/
 
 2. Reload and update:
    ha addons reload
-   ha addons update local_influx_mcp
-   ha addons restart local_influx_mcp
+   ha addons update local_influxdb_mcp
+   ha addons restart local_influxdb_mcp
 
 If update does not pick it up:
    ha supervisor restart
    ha addons reload
-   ha addons update local_influx_mcp
-   ha addons restart local_influx_mcp
+   ha addons update local_influxdb_mcp
+   ha addons restart local_influxdb_mcp
 
 If update fails:
-   ha addons rebuild local_influx_mcp
-   ha addons restart local_influx_mcp
+   ha addons rebuild local_influxdb_mcp
+   ha addons restart local_influxdb_mcp
 
 Test:
 curl -i https://mcp.example.com/health

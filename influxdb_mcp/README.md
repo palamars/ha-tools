@@ -2,7 +2,17 @@
 
 Read-only MCP server for Home Assistant + InfluxDB v1 / InfluxQL.
 
-This is a Home Assistant local add-on. It exposes an MCP SSE endpoint and lets an AI assistant query InfluxDB through safe read-only tools.
+This repository is formatted as a Home Assistant add-on repository. The add-on itself is in `influxdb_mcp/` and uses the slug `influxdb_mcp`, so it does not conflict with an older local `/addons/influx_mcp` add-on.
+
+## Add this repository to Home Assistant
+
+Home Assistant → Settings → Add-ons → Add-on Store → ⋮ → Repositories → add:
+
+```text
+https://github.com/palamars/ha-tools
+```
+
+Then install **InfluxDB MCP** from the add-on store.
 
 ## Secrets
 
@@ -24,29 +34,20 @@ Configure sensitive values only in Home Assistant add-on options. OAuth access t
 
 `query_influx` blocks write/admin statements and multiple statements.
 
-## Install as a local Home Assistant add-on
+## Optional local add-on install
 
-Copy this folder to Home Assistant:
+If you still want to install it as a local add-on instead of through the repository, copy the add-on folder to Home Assistant:
 
 ```bash
-/addons/influx_mcp/
+/addons/influxdb_mcp/
 ```
 
 Then run:
 
 ```bash
 ha addons reload
-ha addons update local_influx_mcp
-ha addons restart local_influx_mcp
-```
-
-If Home Assistant does not detect the update:
-
-```bash
-ha supervisor restart
-ha addons reload
-ha addons update local_influx_mcp
-ha addons restart local_influx_mcp
+ha addons update local_influxdb_mcp
+ha addons restart local_influxdb_mcp
 ```
 
 ## Required configuration
@@ -66,8 +67,9 @@ Without an OAuth token, `/sse` should return `401`, not `500`.
 
 ## Files
 
-- `config.yaml` — Home Assistant add-on manifest and option schema.
-- `Dockerfile` — add-on image build.
-- `app.py` — MCP server, OAuth and InfluxQL logic.
-- `run.sh` — container entrypoint.
-- `requirements.txt` — Python dependencies.
+- `repository.yaml` — Home Assistant add-on repository metadata.
+- `influxdb_mcp/config.yaml` — Home Assistant add-on manifest and option schema.
+- `influxdb_mcp/Dockerfile` — add-on image build.
+- `influxdb_mcp/app.py` — MCP server, OAuth and InfluxQL logic.
+- `influxdb_mcp/run.sh` — container entrypoint.
+- `influxdb_mcp/requirements.txt` — Python dependencies.
